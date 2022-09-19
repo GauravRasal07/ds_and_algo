@@ -1,4 +1,10 @@
 def decryptPassword(s) :
+    '''
+    Given a string of numbers and special characters, return the decrypted password
+    
+    :param s: the encrypted password
+    :return: The decrypted password.
+    '''
     nums = ["1", "2" ,"3", "4", "5", "6", "7", "8", "9"]
     res = []
     stack = []

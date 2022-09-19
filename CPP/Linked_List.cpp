@@ -2,7 +2,7 @@
 #include <iostream>
 using namespace std;
 
-class node{
+class node {
     public :
         int data;
         node* next;
@@ -79,6 +79,7 @@ void Display(node* Head){
 
 void Delete(node* &Head, int key){
     if(Head == NULL){
+        // cout<<'The list is empty'<<endl;
         return;
     }
     
@@ -130,28 +131,74 @@ node* reverseRecursive(node* &Head){
     return newHead;
 }
 
+node* merge(node* &p1, node* &p2){
+    node* h1 = p1;
+    node* h2 = p2;
+    node* newHead = new node(-1);
+    node* h3 = newHead;
+    
+    while(h1 != NULL && h2 != NULL){
+        if(h1->data <= h2->data){
+            h3->next = h1;
+            h1 = h1->next;
+        } else {
+            h3->next = h2;
+            h2 = h2->next;
+        }
+        
+        h3 = h3->next;
+    }
+    
+    while(h1 != NULL){
+        h3->next = h1;
+        h1 = h1->next;
+        h3 = h3->next;
+    }
+
+    while(h2 != NULL){
+        h3->next = h2;
+        h2 = h2->next;
+        h3 = h3->next;
+    }
+
+    return newHead->next;
+}
+
 int main(){
     cout<<"Heyy There, We're Learning Linked List\n"<<endl;
     
     node* Head = NULL;
-    insertAtTail(Head, 1);
-    insertAtTail(Head, 2);
-    insertAtTail(Head, 4);
-    
+    node* secondHead = NULL;
     insertAtHead(Head, 0);
+    insertAtTail(Head, 1);
+    insertAtTail(Head, 3);
+    insertAtTail(Head, 5);
     
-    insert(Head, 3, 2);
+    // insert(Head, 3, 2);
+
+    insertAtTail(secondHead, 2);
+    insertAtTail(secondHead, 4);
+    insertAtTail(secondHead, 6);
+    insertAtTail(secondHead, 7);
+
+    // insertAtHead(secondHead, );
+
     
-    cout<<"Original Linked List is : ";
+    cout<<"Original Linked List is : \n";
     Display(Head);
+    Display(secondHead);
+    cout << endl;
+
+    cout<<"Merged Linked List is : \n";
+    Display(merge(Head, secondHead));
+
+    // node* newHead = reverseRecursive(Head);
+    // cout<<"\nReversed Linked List is : ";
+    // Display(newHead);
     
-    node* newHead = reverseRecursive(Head);
-    cout<<"\nReversed Linked List is : ";
-    Display(newHead);
-    
-    reverse(newHead);
-    cout<<"\nAgain Reversed Linked List is : ";
-    Display(newHead);
+    // reverse(newHead);
+    // cout<<"\nAgain Reversed Linked List is : ";
+    // Display(newHead);
     
     return 0;
 }

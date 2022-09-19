@@ -1,0 +1,135 @@
+=======================================================================================
+175. Combine Two Tables
+https://leetcode.com/problems/combine-two-tables/
+
+select FirstName, LastName, City, State
+from Person left join Address
+on Person.PersonId = Address.PersonId;
+
+=======================================================================================
+176. Second Highest Salary
+https://leetcode.com/problems/second-highest-salary/
+
+
+Select max(Salary) as SecondHighestSalary  from Employee where Salary not in (Select max(Salary) from Employee);
+
+SELECT
+(SELECT DISTINCT Salary
+FROM  Employee
+ORDER BY Salary DESC
+LIMIT 1 OFFSET 1) AS SecondHighestSalary
+
+=======================================================================================
+177. Nth Highest Salary
+https://leetcode.com/problems/nth-highest-salary/submissions/
+
+CREATE FUNCTION getNthHighestSalary(N INT) RETURNS INT
+BEGIN
+  DECLARE X INT;
+  SET X=N-1;
+  RETURN (
+       SELECT DISTINCT Salary FROM Employee ORDER BY salary DESC LIMIT X,1
+  );
+END
+
+=======================================================================================
+178. Rank Scores
+https://leetcode.com/problems/rank-scores/
+
+Use of Window FUNCTION
+Query Template :  Select Something, Agrregate() Over(Partition By X Order by Y) As "XYZ" From Table
+
+SELECT score, DENSE_RANK() OVER(ORDER BY score DESC) as 'rank' FROM Scores;
+
+Another Approach
+Select score,
+(Select COUNT(DISTINCTscore) from Scores s2 where s2.score>=s1.score) as "Rank"
+from Scores s1
+Order by s1.score DESC
+
+=======================================================================================
+180. Consecutive Numbers
+https://leetcode.com/problems/consecutive-numbers/
+
+Solution 1
+SELECT DISTINCT A.num as 'ConsecutiveNums' FROM Logs A, Logs B, Logs C 
+WHERE A.id=B.id-1 and B.id=C.id-1 and A.num=B.num and B.num=C.num;
+
+
+Solution 2 (Using Joins)
+SELECT DISTINCT A.num as 'ConsecutiveNums' FROM Logs A 
+Join Logs B On A.id=B.id+1 and A.num=B.num 
+Join Logs C On C.id=A.id+2 and A.num=C.num 
+
+
+=======================================================================================
+181. Employees Earning More Than Their Managers
+https://leetcode.com/problems/employees-earning-more-than-their-managers/
+
+SELECT e.name as 'Employee'
+FROM Employee te1 JOIN Employee m
+ON e.managerId=m.id WHERE e.salary>m.salary;
+
+=======================================================================================
+182. Duplicate Emails
+https://leetcode.com/problems/duplicate-emails/
+
+SELECT distinct email 
+FROM (SELECT email, COUNT(email) as c
+from Person 
+GROUP BY email) as temp
+WHERE temp.c > 1
+
+
+Solution 2(Using Having)
+SELECT distinct email  FROM Person
+GROUP BY email 
+HAVING COUNT(email)>1
+
+Solution 3(Using Join)
+SELECT DISTINCT p1.email From Person p1 
+Join Person p2 on p1.email=p2.email and p1.id<>p2.id;
+
+=======================================================================================
+183. Customers Who Never Order
+https://leetcode.com/problems/customers-who-never-order/
+
+SELECT name as 'Customers' from Customers Where id NOT IN (SELECT customerId from Orders);
+
+Another Solution(Using Left Join)
+SELECT name as 'Customers' from Customers c
+LEFT JOIN Orders o ON c.id=o.customerId where ISNULL(o.id);
+
+=======================================================================================
+184. Department Highest Salary
+https://leetcode.com/problems/department-highest-salary/
+
+SELECT D.name as 'Department',E.name as 'Employee',E.salary as 'Salary' from Employee E
+Join Department D On E.departmentId=D.id
+Where (E.departmentId,E.salary) in (SELECT departmentId,max(salary) as 'salary' from Employee
+group by departmentId);
+
+=======================================================================================
+185. Department Top Three Salaries
+https://leetcode.com/problems/department-top-three-salaries/
+
+SELECT Department.name as Department,e.name as Employee,e.salary as Salary 
+from (SELECT  departmentId,name,salary, DENSE_RANK() OVER(PARTITION BY departmentId ORDER BY salary DESC) as r FROM Employee) as e 
+JOIN Department
+ON e.departmentId=Department.id
+WHERE e.r <=3
+
+=======================================================================================
+196. Delete Duplicate Emails
+https://leetcode.com/problems/delete-duplicate-emails/
+
+DELETE p1 from Person p1,Person p2 Where p1.email=p2.email and p1.id>p2.id;
+
+=======================================================================================
+197. Rising Temperature
+https://leetcode.com/problems/rising-temperature/
+
+SELECT DISTINCT T2.id from Weather  T1,Weather T2 WHERE 
+Datediff(T2.recordDate,T1.recordDate)=1  and T2.temperature>T1.temperature;
+
+=======================================================================================
